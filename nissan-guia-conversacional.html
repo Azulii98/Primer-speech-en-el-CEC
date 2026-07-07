@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nissan · Guía Conversacional Contact Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-void:#0a0a0c;
+    --bg-panel:#131417;
+    --bg-panel-raised:#1b1d22;
+    --bg-panel-hover:#212329;
+    --border-subtle:#2a2d34;
+    --border-faint:#1f2126;
+    --text-primary:#f3f3f1;
+    --text-secondary:#9a9da6;
+    --text-tertiary:#6b6e77;
+    --nissan-red:#c3002f;
+    --nissan-red-bright:#e30613;
+    --hud-blue:#3da9fc;
+    --hud-blue-dim:#2a6ea8;
+    --success:#2fbf71;
+    --warning:#f5a623;
+    --danger:#e5484d;
+    --radius-sm:8px;
+    --radius-md:14px;
+    --radius-lg:22px;
+    --font-display:'Zen Kaku Gothic New', 'Inter', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'IBM Plex Mono', monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg-void);
+    color:var(--text-primary);
+    font-family:var(--font-body);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+  }
+  ::selection{background:var(--nissan-red); color:#fff;}
+  a{color:var(--hud-blue);}
+  button{font-family:inherit;}
+  :focus-visible{outline:2px solid var(--hud-blue); outline-offset:2px;}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;
+    min-height:78vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    overflow:hidden;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 0%, rgba(195,0,47,0.16), transparent 60%),
+      linear-gradient(180deg, #0a0a0c 0%, #0d0e11 55%, #0a0a0c 100%);
+    border-bottom:1px solid var(--border-faint);
+  }
+  .hero-nav{
+    position:relative;
+    z-index:5;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:26px 5vw 0;
+  }
+  .hero-brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    font-family:var(--font-display);
+    font-weight:700;
+    letter-spacing:0.14em;
+    font-size:15px;
+    text-transform:uppercase;
+  }
+  .hero-brand .mark{
+    width:34px; height:34px;
+    border-radius:50%;
+    background:var(--nissan-red);
+    display:flex;align-items:center;justify-content:center;
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:16px;
+    color:#fff;
+    box-shadow:0 0 0 1px rgba(255,255,255,0.08), 0 0 30px rgba(195,0,47,0.55);
+  }
+  .hero-brand .divider{ width:1px; height:18px; background:var(--border-subtle);}
+  .hero-brand .sub{ font-family:var(--font-body); font-weight:500; letter-spacing:0.06em; color:var(--text-secondary); font-size:12px; text-transform:none;}
+  .hero-tag{
+    font-family:var(--font-mono);
+    font-size:11px;
+    color:var(--hud-blue);
+    letter-spacing:0.08em;
+    border:1px solid rgba(61,169,252,0.35);
+    padding:6px 12px;
+    border-radius:999px;
+    background:rgba(61,169,252,0.06);
+  }
+
+  .hero-main{
+    position:relative;
+    z-index:5;
+    display:grid;
+    grid-template-columns:1.1fr 0.9fr;
+    align-items:center;
+    gap:40px;
+    padding:0 5vw;
+    flex:1;
+  }
+  .hero-copy .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--text-tertiary);
+    margin:0 0 18px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .hero-copy .eyebrow::before{
+    content:'';
+    width:28px; height:1px;
+    background:var(--nissan-red);
+    display:inline-block;
+  }
+  .hero-copy h1{
+    font-family:var(--font-display);
+    font-weight:900;
+    font-size:clamp(2.1rem, 4.6vw, 3.8rem);
+    line-height:1.03;
+    margin:0 0 22px;
+    letter-spacing:-0.01em;
+  }
+  .hero-copy h1 .accent{ color:var(--nissan-red); }
+  .hero-copy p{
+    color:var(--text-secondary);
+    font-size:16px;
+    max-width:520px;
+    margin:0 0 32px;
+  }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:14.5px;
+    padding:14px 26px;
+    border-radius:999px;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--nissan-red); color:#fff; box-shadow:0 10px 30px -8px rgba(195,0,47,0.65); }
+  .btn-primary:hover{ background:var(--nissan-red-bright); }
+  .btn-ghost{ background:transparent; color:var(--text-primary); border-color:var(--border-subtle); }
+  .btn-ghost:hover{ border-color:var(--hud-blue); color:var(--hud-blue); }
+
+  .hero-visual{ position:relative; height:100%; display:flex; align-items:center; justify-content:center; }
+  .hero-visual svg{ width:100%; height:auto; max-width:560px; }
+  .hero-stats{
+    position:relative; z-index:5;
+    display:grid; grid-template-columns:repeat(4,1fr);
+    border-top:1px solid var(--border-faint);
+    padding:22px 5vw 26px;
+  }
+  .hero-stats .stat{ padding:0 18px; border-left:1px solid var(--border-faint); }
+  .hero-stats .stat:first-child{ border-left:none; padding-left:0; }
+  .hero-stats .stat b{
+    display:block; font-family:var(--font-display); font-weight:900;
+    font-size:22px; color:var(--text-primary);
+  }
+  .hero-stats .stat span{ font-size:12px; color:var(--text-tertiary); }
+
+  @media (max-width: 880px){
+    .hero-main{ grid-template-columns:1fr; text-align:left; }
+    .hero-visual{ order:-1; height:220px; }
+    .hero-stats{ grid-template-columns:repeat(2,1fr); row-gap:16px; }
+    .hero-stats .stat:nth-child(3){ border-left:none; }
+  }
+
+  /* ============ APP SHELL ============ */
+  .app-shell{ max-width:1360px; margin:0 auto; padding:0 5vw 90px; }
+
+  .sticky-bar{
+    position:sticky; top:0; z-index:40;
+    background:rgba(10,10,12,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border-faint);
+    margin:0 -5vw 34px;
+    padding:14px 5vw;
+    display:flex; align-items:center; justify-content:space-between; gap:18px;
+    flex-wrap:wrap;
+  }
+  .sticky-bar .progress-wrap{ display:flex; align-items:center; gap:12px; flex:1; min-width:220px; }
+  .progress-track{ flex:1; height:6px; background:var(--border-faint); border-radius:99px; overflow:hidden; max-width:280px; }
+  .progress-fill{ height:100%; width:0%; background:linear-gradient(90deg, var(--nissan-red), var(--hud-blue)); transition:width .4s ease; }
+  .progress-label{ font-family:var(--font-mono); font-size:12px; color:var(--text-secondary); white-space:nowrap; }
+  .status-pill{
+    font-family:var(--font-mono); font-size:11.5px; padding:6px 12px; border-radius:999px;
+    border:1px solid var(--border-subtle); color:var(--text-secondary);
+  }
+  .status-pill.open{ color:var(--success); border-color:rgba(47,191,113,0.4); background:rgba(47,191,113,0.08); }
+  .status-pill.closed{ color:var(--danger); border-color:rgba(229,72,77,0.4); background:rgba(229,72,77,0.08); }
+
+  .section-heading{ margin:6px 0 20px; }
+  .section-heading .eyebrow{ font-family:var(--font-mono); font-size:11.5px; color:var(--hud-blue); letter-spacing:0.14em; text-transform:uppercase; margin:0 0 6px; }
+  .section-heading h2{ font-family:var(--font-display); font-weight:700; font-size:22px; margin:0; }
+  .section-heading p{ color:var(--text-secondary); font-size:14px; margin:6px 0 0; max-width:640px; }
+
+  /* base data panel */
+  .base-panel{
+    background:var(--bg-panel);
+    border:1px solid var(--border-subtle);
+    border-radius:var(--radius-lg);
+    padding:26px 28px;
+    margin-bottom:40px;
+  }
+  .base-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; margin-top:18px; }
+  @media (max-width: 980px){ .base-grid{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width: 560px){ .base-grid{ grid-template-columns:1fr;} }
+
+  .field label{ display:block; font-size:12px; color:var(--text-secondary); margin-bottom:7px; font-weight:600; letter-spacing:0.02em; }
+  .field input, .field select, .field textarea{
+    width:100%; background:var(--bg-void); border:1px solid var(--border-subtle);
+    color:var(--text-primary); border-radius:var(--radius-sm); padding:11px 13px;
+    font-family:var(--font-body); font-size:14px; transition:border-color .15s ease;
+  }
+  .field input::placeholder{ color:var(--text-tertiary); }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--hud-blue); }
+  .field textarea{ resize:vertical; min-height:70px; }
+
+  /* main grid: rail + panel */
+  .workspace{ display:grid; grid-template-columns:380px 1fr; gap:28px; align-items:start; }
+  @media (max-width: 980px){ .workspace{ grid-template-columns:1fr; } }
+
+  /* ===== rail (left, "carretera") ===== */
+  .rail{ position:relative; }
+  .rail-line{
+    position:absolute; left:23px; top:26px; bottom:26px; width:2px;
+    background:repeating-linear-gradient(180deg, var(--border-subtle) 0 10px, transparent 10px 18px);
+  }
+  .rail-item{ position:relative; padding-left:60px; margin-bottom:6px; }
+  .rail-node{
+    position:absolute; left:0; top:14px; width:48px; height:48px; border-radius:50%;
+    background:var(--bg-panel); border:1px solid var(--border-subtle);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-display); font-weight:700; font-size:16px; color:var(--text-tertiary);
+    z-index:2; transition:all .2s ease;
+  }
+  .rail-item.done .rail-node{ background:rgba(47,191,113,0.12); border-color:var(--success); color:var(--success); }
+  .rail-item.active .rail-node{ background:var(--nissan-red); border-color:var(--nissan-red); color:#fff; box-shadow:0 0 0 5px rgba(195,0,47,0.16); }
+  .rail-item.locked .rail-node{ color:var(--text-tertiary); opacity:0.5; }
+
+  .rail-btn{
+    width:100%; text-align:left; background:var(--bg-panel); border:1px solid var(--border-subtle);
+    border-radius:var(--radius-md); padding:14px 16px; cursor:pointer; color:var(--text-primary);
+    display:flex; flex-direction:column; gap:3px; transition:all .15s ease;
+  }
+  .rail-btn:hover{ border-color:var(--hud-blue); background:var(--bg-panel-hover); }
+  .rail-item.active .rail-btn{ border-color:var(--nissan-red); background:var(--bg-panel-raised); }
+  .rail-item.locked .rail-btn{ cursor:not-allowed; opacity:0.55; }
+  .rail-btn .t{ font-weight:700; font-size:14.5px; }
+  .rail-btn .d{ font-size:12px; color:var(--text-secondary); }
+  .rail-lock-note{ font-size:11px; color:var(--warning); margin-top:5px; display:flex; align-items:center; gap:5px; }
+
+  /* ===== message panel (right) ===== */
+  .panel{
+    background:var(--bg-panel); border:1px solid var(--border-subtle); border-radius:var(--radius-lg);
+    padding:28px 30px; min-height:420px;
+  }
+  .panel-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; margin-bottom:18px; flex-wrap:wrap; }
+  .panel-head .step-tag{ font-family:var(--font-mono); font-size:11.5px; color:var(--hud-blue); letter-spacing:0.1em; text-transform:uppercase; }
+  .panel-head h3{ font-family:var(--font-display); font-size:21px; margin:6px 0 0; font-weight:700; }
+
+  .alert{
+    display:flex; gap:10px; align-items:flex-start; padding:13px 15px; border-radius:var(--radius-sm);
+    background:rgba(245,166,35,0.09); border:1px solid rgba(245,166,35,0.4); color:#f5c877;
+    font-size:13px; margin-bottom:18px;
+  }
+  .alert.danger{ background:rgba(229,72,77,0.09); border-color:rgba(229,72,77,0.45); color:#f5a3a6; }
+  .alert b{ color:inherit; }
+
+  .choice-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  .chip{
+    padding:9px 16px; border-radius:999px; border:1px solid var(--border-subtle); background:var(--bg-void);
+    color:var(--text-secondary); font-size:13.5px; font-weight:600; cursor:pointer; transition:all .15s ease;
+  }
+  .chip:hover{ border-color:var(--hud-blue); color:var(--text-primary); }
+  .chip.selected{ background:var(--nissan-red); border-color:var(--nissan-red); color:#fff; }
+  .chip.selected.blue{ background:var(--hud-blue); border-color:var(--hud-blue); }
+
+  .subfield{ margin-bottom:18px; max-width:420px; }
+
+  .message-card{
+    background:var(--bg-void); border:1px solid var(--border-subtle); border-radius:var(--radius-md);
+    padding:20px 22px; position:relative; margin-bottom:16px;
+  }
+  .message-card::before{
+    content:'💬'; position:absolute; top:-13px; left:18px; background:var(--bg-panel);
+    padding:2px 8px; border-radius:999px; font-size:13px; border:1px solid var(--border-subtle);
+  }
+  .message-text{ font-size:15px; line-height:1.65; white-space:pre-wrap; color:var(--text-primary); }
+  .message-text mark.missing{
+    background:rgba(229,72,77,0.18); color:#ff9a9d; border:1px dashed rgba(229,72,77,0.6);
+    padding:1px 6px; border-radius:5px; font-family:var(--font-mono); font-size:12.5px; font-weight:600;
+  }
+  .message-text a{ color:var(--hud-blue); }
+
+  .msg-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .btn-copy{
+    background:var(--bg-panel-raised); border:1px solid var(--border-subtle); color:var(--text-primary);
+    padding:9px 16px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer;
+    display:inline-flex; gap:7px; align-items:center; transition:all .15s ease;
+  }
+  .btn-copy:hover{ border-color:var(--hud-blue); }
+  .btn-copy.copied{ border-color:var(--success); color:var(--success); }
+
+  .divider-label{
+    font-family:var(--font-mono); font-size:11px; color:var(--text-tertiary); text-transform:uppercase;
+    letter-spacing:0.1em; margin:22px 0 12px; display:flex; align-items:center; gap:10px;
+  }
+  .divider-label::after{ content:''; flex:1; height:1px; background:var(--border-faint); }
+
+  /* datos personales checklist */
+  .datos-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px; margin-top:6px; }
+  @media (max-width:600px){ .datos-grid{ grid-template-columns:1fr; } }
+
+  /* vehicle picker */
+  .vehicle-select-row{ display:flex; gap:14px; align-items:flex-end; flex-wrap:wrap; margin-bottom:20px; }
+  .vehicle-select-row .field{ flex:1; min-width:220px; }
+
+  .vehicle-photo-note{
+    display:flex; gap:14px; align-items:center; background:var(--bg-void); border:1px dashed var(--border-subtle);
+    border-radius:var(--radius-md); padding:16px 18px; margin-bottom:16px;
+  }
+  .vehicle-photo-note .icon-box{
+    width:52px; height:52px; border-radius:var(--radius-sm); background:var(--bg-panel-raised);
+    display:flex; align-items:center; justify-content:center; font-size:22px; flex:none;
+  }
+  .vehicle-photo-note .txt b{ display:block; font-size:13.5px; }
+  .vehicle-photo-note .txt span{ font-size:12.5px; color:var(--text-secondary); }
+
+  .spec-strip{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .spec-chip{
+    background:var(--bg-panel-raised); border:1px solid var(--border-faint); border-radius:var(--radius-sm);
+    padding:9px 14px; text-align:center; min-width:82px;
+  }
+  .spec-chip b{ display:block; font-family:var(--font-mono); font-size:15px; color:var(--hud-blue); }
+  .spec-chip span{ font-size:10.5px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.05em; }
+
+  .versions-table{ width:100%; border-collapse:collapse; margin-bottom:6px; }
+  .versions-table th{ text-align:left; font-size:11px; color:var(--text-tertiary); text-transform:uppercase; letter-spacing:0.06em; padding:0 10px 8px; font-weight:600; }
+  .versions-table td{ padding:11px 10px; border-top:1px solid var(--border-faint); font-size:13.5px; }
+  .versions-table td.price{ font-family:var(--font-mono); color:var(--hud-blue); }
+
+  .toggle-more{
+    background:transparent; border:1px solid var(--border-subtle); color:var(--text-secondary);
+    padding:9px 14px; border-radius:var(--radius-sm); font-size:13px; cursor:pointer; font-weight:600;
+  }
+  .toggle-more:hover{ border-color:var(--hud-blue); color:var(--text-primary); }
+
+  /* preguntas (step 5) */
+  .qa-block{ border:1px solid var(--border-faint); border-radius:var(--radius-md); padding:18px 20px; margin-bottom:16px; }
+  .qa-block .qa-num{ font-family:var(--font-mono); color:var(--nissan-red); font-size:12px; font-weight:700; }
+  .qa-answer-label{ font-size:12px; color:var(--text-secondary); margin:14px 0 8px; font-weight:600; }
+
+  /* resumen */
+  .summary-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  @media (max-width: 760px){ .summary-grid{ grid-template-columns:1fr; } }
+  .summary-card{ background:var(--bg-void); border:1px solid var(--border-subtle); border-radius:var(--radius-md); padding:18px 20px; }
+  .summary-card h4{ margin:0 0 12px; font-size:13px; text-transform:uppercase; letter-spacing:0.06em; color:var(--text-tertiary); font-family:var(--font-mono); }
+  .summary-row{ display:flex; justify-content:space-between; gap:12px; padding:8px 0; border-top:1px solid var(--border-faint); font-size:13.5px; }
+  .summary-row:first-of-type{ border-top:none; }
+  .summary-row span:first-child{ color:var(--text-secondary); }
+  .summary-row span:last-child{ font-weight:600; text-align:right; }
+  .badge-ok{ color:var(--success); }
+  .badge-missing{ color:var(--danger); }
+  .badge-neutral{ color:var(--text-tertiary); }
+
+  .reset-link{ background:none; border:none; color:var(--text-tertiary); font-size:12.5px; cursor:pointer; text-decoration:underline; }
+  .reset-link:hover{ color:var(--danger); }
+
+  footer{ text-align:center; padding:34px 5vw 40px; color:var(--text-tertiary); font-size:12px; border-top:1px solid var(--border-faint); margin-top:20px;}
+  footer b{ color:var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+  <nav class="hero-nav">
+    <div class="hero-brand">
+      <div class="mark">N</div>
+      <span>Nissan Colombia</span>
+      <div class="divider"></div>
+      <span class="sub">Contact Center AlmaExperience</span>
+    </div>
+    <div class="hero-tag">● Canal Digital Nissan · Herramienta interna</div>
+  </nav>
+
+  <div class="hero-main">
+    <div class="hero-copy">
+      <p class="eyebrow">Guía de conversación asistida</p>
+      <h1>Cada mensaje,<br>en el <span class="accent">momento</span> correcto.</h1>
+      <p>Selecciona el paso de la conversación y la herramienta despliega el mensaje exacto para enviar al lead: datos, producto y objeciones, sin perder el ritmo ni el tono de marca Nissan.</p>
+      <div class="hero-ctas">
+        <button class="btn btn-primary" onclick="document.getElementById('app').scrollIntoView({behavior:'smooth'})">Iniciar guía ↓</button>
+        <button class="btn btn-ghost" onclick="document.getElementById('resumen').scrollIntoView({behavior:'smooth'})">Ver resumen del lead</button>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <svg viewBox="0 0 560 340" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="floorGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#c3002f" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#c3002f" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#3da9fc" stop-opacity="0"/>
+            <stop offset="50%" stop-color="#3da9fc" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#3da9fc" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#c3002f" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#c3002f" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="280" cy="270" rx="230" ry="18" fill="url(#floorGrad)"/>
+        <g opacity="0.35" stroke="#2a2d34" stroke-width="1">
+          <line x1="40" y1="230" x2="520" y2="230"/>
+          <line x1="60" y1="250" x2="500" y2="250"/>
+          <line x1="90" y1="270" x2="470" y2="270"/>
+          <line x1="130" y1="290" x2="430" y2="290"/>
+        </g>
+        <circle cx="280" cy="150" r="120" fill="url(#glow)"/>
+        <rect x="0" y="150" width="560" height="10" fill="url(#beam)">
+          <animate attributeName="y" values="120;190;120" dur="5s" repeatCount="indefinite"/>
+        </rect>
+        <!-- silueta minimalista de vehículo -->
+        <g transform="translate(80,150)" fill="none" stroke="#f3f3f1" stroke-width="3" stroke-linejoin="round" stroke-linecap="round">
+          <path d="M10 80 L28 46 C40 24 58 14 92 14 L280 14 C310 14 330 24 356 46 L392 80" />
+          <path d="M10 80 L392 80 L392 100 L10 100 Z" />
+          <path d="M56 46 L100 46 L108 24 L230 24 L262 46 L320 46" stroke="#3da9fc" stroke-width="2.4"/>
+          <circle cx="90" cy="100" r="26" fill="#0a0a0c" stroke="#f3f3f1"/>
+          <circle cx="90" cy="100" r="10" fill="#c3002f" stroke="none"/>
+          <circle cx="316" cy="100" r="26" fill="#0a0a0c" stroke="#f3f3f1"/>
+          <circle cx="316" cy="100" r="10" fill="#c3002f" stroke="none"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat"><b>7</b><span>Pasos del speech</span></div>
+    <div class="stat"><b>10</b><span>Líneas Nissan disponibles</span></div>
+    <div class="stat"><b>6</b><span>Preguntas de perfilación</span></div>
+    <div class="stat"><b id="stat-progress">0%</b><span>Progreso de esta conversación</span></div>
+  </div>
+</section>
+
+<!-- ============ APP ============ -->
+<div class="app-shell" id="app">
+
+  <div class="sticky-bar">
+    <div class="progress-wrap">
+      <span class="progress-label">Progreso</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <span class="progress-label" id="progressText">0 / 7 pasos</span>
+    </div>
+    <span class="status-pill open" id="statusPill">● Conversación abierta</span>
+    <button class="reset-link" onclick="resetAll()">Reiniciar conversación</button>
+  </div>
+
+  <!-- DATOS BASE -->
+  <div class="section-heading">
+    <p class="eyebrow">Panel fijo</p>
+    <h2>Datos base de la conversación</h2>
+    <p>Estos datos alimentan automáticamente los mensajes de todos los pasos. Complétalos apenas el lead te los indique.</p>
+  </div>
+  <div class="base-panel">
+    <div class="base-grid">
+      <div class="field">
+        <label for="in-agente">Nombre del agente</label>
+        <input id="in-agente" placeholder="Ej: Camila Rodríguez" oninput="onBaseChange()">
+      </div>
+      <div class="field">
+        <label for="in-lead">Nombre del lead</label>
+        <input id="in-lead" placeholder="Ej: Andrés Torres" oninput="onBaseChange()">
+      </div>
+      <div class="field">
+        <label for="in-canal">Canal de contacto</label>
+        <select id="in-canal" onchange="onBaseChange()">
+          <option>WhatsApp</option>
+          <option>Llamada</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="in-vehiculo-inicial">Vehículo con el que llega el lead</label>
+        <select id="in-vehiculo-inicial" onchange="onBaseChange()">
+          <option value="">— No trae línea definida —</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-heading">
+    <p class="eyebrow">Navegación del speech</p>
+    <h2>Selecciona el paso de la conversación</h2>
+    <p>Cada paso despliega el mensaje sugerido a la derecha. Los pasos se bloquean si falta información previa o si el lead cerró el canal.</p>
+  </div>
+
+  <div class="workspace">
+    <!-- RAIL -->
+    <nav class="rail" id="rail">
+      <div class="rail-line"></div>
+      <!-- rail items injected by JS -->
+    </nav>
+
+    <!-- PANEL -->
+    <div class="panel" id="panel">
+      <!-- contenido inyectado por JS -->
+    </div>
+  </div>
+
+  <!-- RESUMEN -->
+  <div id="resumen" style="margin-top:56px;">
+    <div class="section-heading">
+      <p class="eyebrow">Cierre del proceso</p>
+      <h2>Resumen de la conversación</h2>
+      <p>Toda la información capturada durante el speech, lista para entregar al asesor comercial asignado.</p>
+    </div>
+    <div class="panel">
+      <div class="panel-head">
+        <div>
+          <span class="step-tag">Resumen final</span>
+          <h3>Datos recopilados del lead</h3>
+        </div>
+        <button class="btn-copy" onclick="copySummary()" id="copySummaryBtn">📋 Copiar resumen</button>
+      </div>
+      <div class="summary-grid" id="summaryGrid"></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  Herramienta interna de apoyo conversacional · <b>Nissan Colombia · Distribuidora Nissan S.A.</b> · Los precios mostrados son referenciales, verifica siempre la vigencia con tu supervisor.
+</footer>
+
+<script>
+/* ===================== DATA ===================== */
+
+const VEHICLES = [
+  {
+    id:'versa', nombre:'Nissan Versa', segmento:'Sedán',
+    specs:[['1.6L','Motor'],['122 HP','Potencia'],['482 L','Baúl']],
+    copy:'Nissan Versa redefine su segmento con un diseño moderno, gran confort y tecnología pensada para ti desde el primer instante. Vive un manejo ágil con su motor 1.6L de 122 HP, disponible en transmisión manual o automática CVT (según versión). Su amplio interior y baúl de 482 litros te dan libertad, mientras que su conectividad Apple CarPlay y Android Auto inalámbricos en todas sus versiones y hasta 12 asistencias avanzadas a la conducción hacen cada trayecto más seguro, práctico y emocionante.',
+    versiones:[['Sense','$00.000.000'],['Advance','$00.000.000'],['Exclusive','$00.000.000']]
+  },
+  {
+    id:'sentra', nombre:'Nissan Sentra', segmento:'Sedán',
+    specs:[['2.0L','Motor'],['Nueva gen.','Generación'],['145 HP','Potencia']],
+    copy:'Nissan Sentra convierte cada viaje en una experiencia superior, donde el diseño, la tecnología y el confort se combinan perfectamente. Disfruta su motor 2.0L de 145 HP con transmisión CVT y modos de conducción que se adaptan a tu estilo. Vive un ambiente premium con doble pantalla de 12,3” y sonido BOSE (según versión), mientras que hasta 15  asistencias avanzadas a la conducción te brindan seguridad y confianza para llegar más lejos.',
+    versiones:[['Advance','$00.000.000'],['SR Platinum','$00.000.000']]
+  },
+  {
+    id:'kait', nombre:'Nissan Kait', segmento:'SUV',
+    specs:[['1.6L','Motor'],['122 HP','Potencia'],['432 L','Baúl']],
+    copy:'Nissan Kait combina diseño audaz, confort y tecnología para que disfrutes cada trayecto con estilo. Siente un manejo ágil con su motor 1.6L de 122 HP y transmisión CVT. Su interior amplio, compatibilidad con Apple CarPlay y Android Auto y baúl de 432 litros te dan libertad, mientras su completo equipamiento en seguridad y excelente altura al piso te brindan confianza para vivir cada recorrido con total comodidad.',
+    versiones:[['Sense','$00.000.000'],['Advance','$00.000.000'],['Exclusive','$00.000.000']]
+  },
+  {
+    id:'kicks', nombre:'Nissan Kicks', segmento:'Crossover',
+    specs:[['2.0L','Motor'],['139 HP','Potencia'],['CVT','Transmisión']],
+    copy:'Nissan Kicks destaca por su diseño moderno y tecnología sofisticada. Disfruta su potente motor de 2.0L de 139 HP con transmisión CVT y modos de manejo que se adaptan a tu día a día. Vive una experiencia superior con pantalla de 12.3”, conectividad inalámbrica Apple Carplay y Android, amplio baúl de 470L, excelente altura al piso y un completo paquete de asistencias a la conducción le brindan confianza en cada trayecto.',
+    versiones:[['Sense','$00.000.000'],['Advance','$00.000.000'],['Exclusive','$00.000.000']]
+  },
+  {
+    id:'qashqai', nombre:'Nissan Qashqai', segmento:'SUV',
+    specs:[['1.3L Turbo','Motor'],['147 HP','Potencia'],['CVT o Mecanica','Transmisión']],
+    copy:'La Nissan Qashqai es ideal para quienes buscan tecnología inteligente, confort superior y una presencia que no pasa desapercibida. Siente la potencia de su motor 1.3L turbo de 147 HP disponible con transmisión mecánica o CVT y modos de conducción. Su interior moderno, su completo paquete de asistencias avanzadas a la conducción, pantalla de 12.3” y amplio baúl de 504 litros hacen de cada viaje una experiencia cómoda, segura y llena de estilo.',
+    versiones:[['Sense','$00.000.000'],['Advance','$00.000.000'],['Exclusive','$00.000.000']]
+  },
+  {
+    id:'xtrail', nombre:'Nissan X-Trail e-POWER', segmento:'SUV 7 puestos',
+    specs:[['e-POWER','Tecnología'],['3 filas','Espacio'],['Impulsion Electrica','Sin enchufe']],
+    copy:'Nissan X-Trail e-POWER redefine la forma de conducir, ofreciendo una experiencia de impulsión 100% eléctrica sin enchufes, gracias a un innovador sistema donde el motor a gasolina exclusivamente genera la energía que recarga la batería de sus motores eléctricos. Siente la respuesta inmediata de sus dos motores que entregan 205 HP junto con la tecnología e-4ORCE con tracción en las 4 ruedas, que brinda máximo control y estabilidad. Disfruta hasta 7 asientos, un interior premium y avanzada tecnología, mientras su avanzado equipamiento en seguridad y tecnología elevan toda la experiencia de manejo.',
+    versiones:[['Sense e-POWER','$00.000.000'],['Advance e-POWER','$00.000.000'],['Exclusive e-POWER','$00.000.000']]
+  },
+  {
+    id:'pathfinder', nombre:'Nissan Pathfinder', segmento:'SUV 8 puestos',
+    specs:[['V6 3.5L','Motor'],['270 HP','Potencia'],['3 filas','Espacio']],
+    copy:'Nissan Pathfinder está pensada para quienes buscan amplitud, potencia y confort en cada aventura. Con capacidad para hasta 8 pasajeros, su motor 3.5L V6 de 270 HP junto a una transmisión automática de 9 velocidades con 4 modos de manejo y 3 modos terreno te permiten enfrentar cualquier camino con seguridad. Su interior equipado, incluyendo sonido BOSE y climatización para todas las filas, hace que cada viaje sea tan cómodo como memorable.',
+    versiones:[['Advance','$00.000.000'],['Exclusive','$00.000.000']]
+  },
+  {
+    id:'frontier-diesel', nombre:'Nissan Frontier Diésel', segmento:'Pick-up',
+    specs:[['Diésel','Motor'],['4x4','Tracción*'],['Alta','Capacidad de carga']],
+    copy:'Nissan Frontier Diésel está hecha para quienes necesitan potencia real, capacidad y confianza en los terrenos más exigentes. Equipada con motor 2.3L Bi Turbo de 188 HP y 450 Nm, entrega fuerza desde bajas revoluciones, ideal para carga pesada y pendientes difíciles. Su sistema 4x4 con bloqueo de diferencial garantiza máximo control en cualquier condición. Además, te ofrece más de una tonelada de capacidad de carga y suspensión trasera multilink para mayor estabilidad y confort, y frenos de disco en las 4 ruedas que optimizan la seguridad en cada trayecto.',
+    versiones:[['S 4x4 MT','$00.000.000'],['SE 4x4 MT','$00.000.000'],['SE 4x4 AT','$00.000.000'],['XE 4x4 MT','$00.000.000'],['XE 4x4 AT','$00.000.000'],['PLATINUM 4X4 AT','$00.000.000'],['PRO-4X 4x4 AT','$00.000.000']]
+  },
+  {
+    id:'frontier-gasolina', nombre:'Nissan Frontier Gasolina', segmento:'Pick-up',
+    specs:[['Gasolina','Motor'],['4x2 / 4x4','Tracción*'],['Versátil','Uso']],
+    copy:'Nissan Frontier Gasolina es la pick up ideal si buscas un equilibrio perfecto entre trabajo, confort y uso diario. Equipada con un motor 2.5L de hasta 162 HP y 238 Nm te ofrece un manejo confiable y eficiente, adaptándose con facilidad a ciudad, carretera o labores exigentes. Todas sus versiones son 4x4 con bajo y te ofrecen una capacidad de carga de hasta 996 kg (según versión), para que tengas la versatilidad que necesitas en cada jornada. Se destaca por su alto nivel de seguridad en todas sus versiones y una cabina cómoda y funcional que le brinda mayor confort en cada trayecto.',
+    versiones:[['Chasis 4x2 MT','$00.000.000'],['S 4x2 MT','$00.000.000'],['Sabanera 4x2 MT','$00.000.000'],['Pro-S 4x2 MT','$00.000.000'],['XE 4x4 AT','$00.000.000'],['PRO-4X 4x4 AT','$00.000.000']]
+  },
+  {
+    id:'V-drive', nombre:'Nissan V-Drive', segmento:'Sedán',
+    specs:[['1.6L','Motor'],['118 HP','Potencia'],['Mecanica','Transmisión']],
+    copy:'El Nissan V-Drive es el sedán que combina comodidad, seguridad y confianza en cada trayecto. Disfruta su eficiente motor 1.6L de 118 HP con transmisión manual de 5 velocidades, ideal para tu día a día. Su amplio baúl de 466 litros te brinda el espacio que necesitas, mientras su pantalla táctil de 7” compatible con Android Auto y Apple CarPlay te mantiene conectado en todo momento.',
+    versiones:[['V-Drive','$00.000.000']]
+  }
+];
+
+const LINK_PRIVACIDAD = 'https://www.nissan.com.co/privacidad.html';
+const LINK_SHOWROOM = 'https://nos.dinissan.com.co/';
+
+const STEP_DEFS = [
+  {id:1, num:'01', t:'Inicio de conversación', d:'Saludo inicial según si trae o no línea de vehículo'},
+  {id:2, num:'02', t:'Validación Habeas Data', d:'Autorización de tratamiento de datos (Ley 1581/2012)'},
+  {id:3, num:'03', t:'Datos personales', d:'Confirmación o toma de datos del lead'},
+  {id:4, num:'04', t:'Información de producto', d:'Copy, versiones y precios de la línea Nissan de interés'},
+  {id:5, num:'05', t:'Paso a asesor comercial', d:'6 preguntas de perfilación comercial'},
+  {id:6, num:'06', t:'Cierre de conversación', d:'Mensaje final de agradecimiento y entrega a asesor'},
+  {id:7, num:'07', t:'Reactivación / Inactividad', d:'Mensajes de espera y cierre por inactividad'},
+];
+
+/* ===================== STATE ===================== */
+
+const state = {
+  base:{ agente:'', lead:'', canal:'WhatsApp', vehiculoInicial:'' },
+  step1:{ variante:null, vehiculoSinLinea:'' }, // 'con' | 'sin'
+  step2:{ respuesta:null, intento2:null }, // 'si' | 'no'
+  step3:{ yaTieneDatos:null, nombreCompleto:'', cedula:'', celular:'', correo:'', ciudad:'' },
+  step4:{ vehiculoId:'', versionElegida:'', pideMasInfo:false },
+  step5:{ p1:'', p2:'', p3:'', p4:'', p5:[], p6:'' },
+  step6:{ enviado:false },
+  step7:{ alerta:null, cierreInactividad:null },
+  activeStep:1,
+  conversationClosed:false,
+  closeReason:''
+};
+
+/* ===================== HELPERS ===================== */
+
+function el(html){ const t=document.createElement('template'); t.innerHTML=html.trim(); return t.content.firstElementChild; }
+
+function tok(value, label){
+  if(value && String(value).trim()!==''){ return escapeHtml(value); }
+  return `<mark class="missing">[[Falta: ${label}]]</mark>`;
+}
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function missingBase(){
+  const m=[];
+  if(!state.base.agente) m.push('Nombre del agente');
+  if(!state.base.lead) m.push('Nombre del lead');
+  return m;
+}
+
+function vehiculoActual(){
+  // el vehículo de interés vigente: el elegido en paso 4, o si no, el inicial del panel base / paso 1
+  return state.step4.vehiculoId || state.base.vehiculoInicial || state.step1.vehiculoSinLinea || '';
+}
+function vehiculoNombre(id){ const v=VEHICLES.find(v=>v.id===id); return v? v.nombre.replace('Nissan ','') : ''; }
+
+/* ===================== INIT ===================== */
+
+function populateVehicleSelect(){
+  const sel = document.getElementById('in-vehiculo-inicial');
+  VEHICLES.forEach(v=>{
+    const o = document.createElement('option');
+    o.value=v.id; o.textContent=v.nombre;
+    sel.appendChild(o);
+  });
+}
+
+function onBaseChange(){
+  state.base.agente = document.getElementById('in-agente').value;
+  state.base.lead = document.getElementById('in-lead').value;
+  state.base.canal = document.getElementById('in-canal').value;
+  state.base.vehiculoInicial = document.getElementById('in-vehiculo-inicial').value;
+  renderAll();
+}
+
+/* ===================== STEP UNLOCK LOGIC ===================== */
+
+function stepStatus(id){
+  if(id===1) return state.step1.variante ? 'done' : (state.activeStep===1?'active':'pending');
+  if(id===2){
+    if(!state.step1.variante) return 'locked';
+    return state.step2.respuesta==='si' ? 'done' : (state.activeStep===2?'active':'pending');
+  }
+  // pasos 3 a 7 requieren autorización vigente Y que la conversación no haya sido cerrada
+  if(state.conversationClosed) return 'locked';
+  if(state.step2.respuesta!=='si') return 'locked';
+  if(id===3){
+    const filled = state.step3.nombreCompleto && state.step3.cedula && state.step3.celular && state.step3.correo && state.step3.ciudad;
+    return filled ? 'done' : (state.activeStep===3?'active':'pending');
+  }
+  if(id===4){
+    return state.step4.vehiculoId ? 'done' : (state.activeStep===4?'active':'pending');
+  }
+  if(id===5){
+    const p=state.step5;
+    const filled = p.p1&&p.p2&&p.p3&&p.p4&&p.p5.length&&p.p6;
+    return filled ? 'done' : (state.activeStep===5?'active':'pending');
+  }
+  if(id===6){
+    return state.step6.enviado ? 'done' : (state.activeStep===6?'active':'pending');
+  }
+  if(id===7){
+    return (state.step7.alerta||state.step7.cierreInactividad) ? 'done' : (state.activeStep===7?'active':'pending');
+  }
+  return 'pending';
+}
+
+function lockReason(id){
+  if(id===2) return 'Selecciona primero la variante del paso 1.';
+  if(id>=3 && state.conversationClosed) return 'Conversación cerrada: el lead no autorizó el tratamiento de datos.';
+  if(id>=3) return 'El lead debe autorizar el tratamiento de datos en el paso 2.';
+  return '';
+}
+
+/* ===================== RENDER: RAIL ===================== */
+
+function renderRail(){
+  const rail = document.getElementById('rail');
+  rail.querySelectorAll('.rail-item').forEach(n=>n.remove());
+  STEP_DEFS.forEach(sd=>{
+    const status = stepStatus(sd.id);
+    const isActive = state.activeStep===sd.id;
+    const item = el(`
+      <div class="rail-item ${status==='done'?'done':''} ${isActive?'active':''} ${status==='locked'?'locked':''}">
+        <div class="rail-node">${status==='done' && !isActive ? '✓' : sd.num}</div>
+        <button class="rail-btn" ${status==='locked'?'disabled':''} onclick="goToStep(${sd.id})">
+          <span class="t">${sd.t}</span>
+          <span class="d">${sd.d}</span>
+          ${status==='locked' ? `<span class="rail-lock-note">🔒 ${lockReason(sd.id)}</span>` : ''}
+        </button>
+      </div>
+    `);
+    rail.appendChild(item);
+  });
+}
+
+function goToStep(id){
+  if(stepStatus(id)==='locked') return;
+  state.activeStep = id;
+  renderAll();
+  document.getElementById('panel').scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* ===================== RENDER: PANEL PER STEP ===================== */
+
+function panelHeader(tag, title){
+  return `<div class="panel-head"><div><span class="step-tag">${tag}</span><h3>${title}</h3></div></div>`;
+}
+
+function alertBox(missingList, extra){
+  if((!missingList || missingList.length===0) && !extra) return '';
+  let items = missingList && missingList.length ? `Falta información: <b>${missingList.join(', ')}</b>.` : '';
+  return `<div class="alert">⚠️ <div>${items} ${extra||''}</div></div>`;
+}
+
+function copyBtn(id){
+  return `<div class="msg-actions"><button class="btn-copy" id="${id}" onclick="copyMessage('${id}')">📋 Copiar mensaje</button></div>`;
+}
+
+function copyMessage(btnId){
+  let text = currentMessagesText[btnId] || '';
+  navigator.clipboard?.writeText(text).then(()=>{
+    const b=document.getElementById(btnId);
+    b.classList.add('copied'); b.textContent='✓ Copiado';
+    setTimeout(()=>{ b.classList.remove('copied'); b.innerHTML='📋 Copiar mensaje'; },1600);
+  });
+}
+const currentMessagesText = {};
+
+function renderPanel(){
+  const panel = document.getElementById('panel');
+  const id = state.activeStep;
+  if(state.conversationClosed && id>2 && stepStatus(id)==='locked'){
+    panel.innerHTML = panelHeader('Conversación cerrada', 'Este paso no está disponible') +
+      `<div class="alert danger">🚫 ${state.closeReason}</div>`;
+    return;
+  }
+  const renderers = {1:renderStep1, 2:renderStep2, 3:renderStep3, 4:renderStep4, 5:renderStep5, 6:renderStep6, 7:renderStep7};
+  panel.innerHTML = renderers[id] ? renderers[id]() : '';
+}
+
+/* ---- STEP 1 ---- */
+function renderStep1(){
+  const missing = missingBase();
+  let html = panelHeader('Paso 01 · Apertura', 'Mensaje de inicio de conversación');
+  if(!state.step1.variante) html += alertBox(missing);
+  html += `<div class="choice-row">
+    <button class="chip ${state.step1.variante==='con'?'selected':''}" onclick="setStep1('con')">Con línea de vehículo</button>
+    <button class="chip ${state.step1.variante==='sin'?'selected':''}" onclick="setStep1('sin')">Sin línea de vehículo</button>
+  </div>`;
+
+  if(state.step1.variante==='con'){
+    const vehId = state.base.vehiculoInicial;
+    const vehLabel = vehId ? vehiculoNombre(vehId) : '';
+    const msg = `Buenos días, Sr./Sra. ${tok(state.base.lead,'Nombre del lead')}. Mi nombre es ${tok(state.base.agente,'Nombre del agente')} y te escribo del canal oficial de Nissan Colombia. Veo que solicitaste información sobre el Nissan ${tok(vehLabel,'Vehículo')} 🚗. ¿Deseas que te acompañe con información y orientación sobre tu proceso de compra?`;
+    currentMessagesText['copy-s1'] = plainText(msg);
+    html += alertBox(missing, !vehId ? 'Selecciona el vehículo con el que llega el lead en el panel de datos base.' : '');
+    html += messageCard(msg, 'copy-s1');
+  } else if(state.step1.variante==='sin'){
+    const msg = `Buenos días, Sr./Sra. ${tok(state.base.lead,'Nombre del lead')}. Mi nombre es ${tok(state.base.agente,'Nombre del agente')} y te escribo del canal oficial de Nissan Colombia. ¿Qué vehículo de la familia Nissan estás más interesado en este momento? 🚗 Estaré encantado de acompañarte con toda la información y orientación que necesites en tu proceso de compra.`;
+    currentMessagesText['copy-s1'] = plainText(msg);
+    html += alertBox(missing);
+    html += messageCard(msg, 'copy-s1');
+    html += `<div class="divider-label">Respuesta del cliente</div>`;
+    html += `<div class="subfield"><label style="display:block;font-size:12px;color:var(--text-secondary);margin-bottom:7px;font-weight:600;">Línea que mencionó el cliente</label>
+      <select class="field" style="width:100%;background:var(--bg-void);border:1px solid var(--border-subtle);color:var(--text-primary);border-radius:8px;padding:11px 13px;" onchange="setSinLineaVehiculo(this.value)">
+        <option value="">— Selecciona —</option>
+        ${VEHICLES.map(v=>`<option value="${v.id}" ${state.step1.vehiculoSinLinea===v.id?'selected':''}>${v.nombre}</option>`).join('')}
+      </select></div>`;
+  }
+  return html;
+}
+function setStep1(v){ state.step1.variante=v; renderAll(); }
+function setSinLineaVehiculo(v){ state.step1.vehiculoSinLinea=v; renderAll(); }
+
+/* ---- STEP 2 ---- */
+function renderStep2(){
+  let html = panelHeader('Paso 02 · Cumplimiento', 'Validación de Habeas Data');
+  const missing = missingBase();
+  html += alertBox(missing);
+  const msg = `Perfecto, Sr./Sra. ${tok(state.base.lead,'Nombre del lead')}. Para brindarte una atención más personalizada y asignarte el asesor comercial más adecuado, te haré unas preguntas breves.\nAntes de continuar, y en cumplimiento de la Ley 1581 de 2012 sobre protección de datos personales, puedes consultar nuestra política aquí: <a href="${LINK_PRIVACIDAD}" target="_blank" rel="noopener">Política de Privacidad Nissan</a>\n¿Autorizas el registro y uso de tu información de contacto para este proceso? Por favor responde Sí o No.`;
+  currentMessagesText['copy-s2-1'] = plainText(msg, `Política de Privacidad Nissan: ${LINK_PRIVACIDAD}`);
+  html += messageCard(msg, 'copy-s2-1');
+
+  html += `<div class="divider-label">Respuesta del lead</div>`;
+  html += `<div class="choice-row">
+    <button class="chip selected blue" style="${state.step2.respuesta==='si'?'':'background:var(--bg-void);color:var(--text-secondary);'}" onclick="setStep2Respuesta('si')">Sí, autoriza</button>
+    <button class="chip" style="${state.step2.respuesta==='no'?'background:var(--nissan-red);border-color:var(--nissan-red);color:#fff;':''}" onclick="setStep2Respuesta('no')">No autoriza</button>
+  </div>`;
+
+  if(state.step2.respuesta==='no'){
+    const msg2 = `Al NO aceptar los términos y condiciones de contacto no podremos atender tu solicitud por este canal 😥. Para continuar es necesario contar con tu aceptación.`;
+    currentMessagesText['copy-s2-2'] = plainText(msg2);
+    html += `<div class="divider-label">2.1 · El lead no autoriza (primer intento)</div>`;
+    html += messageCard(msg2, 'copy-s2-2');
+
+    html += `<div class="divider-label">¿Cambió de opinión tras el segundo mensaje?</div>`;
+    html += `<div class="choice-row">
+      <button class="chip selected blue" style="${state.step2.intento2==='si'?'':'background:var(--bg-void);color:var(--text-secondary);'}" onclick="setStep2Intento2('si')">Sí, ahora autoriza</button>
+      <button class="chip" style="${state.step2.intento2==='no'?'background:var(--nissan-red);border-color:var(--nissan-red);color:#fff;':''}" onclick="setStep2Intento2('no')">Sigue sin autorizar</button>
+    </div>`;
+
+    if(state.step2.intento2==='no'){
+      const msg3 = `Entendemos tu decisión 👍. Sin embargo, sin la aceptación de los términos y condiciones no nos es posible continuar la atención por este canal 🤕. Si en algún momento decides aceptarlos, con gusto estaremos disponibles para ayudarte con tu interés en Nissan 🚗.`;
+      currentMessagesText['copy-s2-3'] = plainText(msg3);
+      html += `<div class="divider-label">2.2 · Cierre por no aceptación</div>`;
+      html += messageCard(msg3, 'copy-s2-3');
+      html += `<div class="alert danger">🚫 Con este mensaje se da cierre a la conversación. El resto de pasos quedará bloqueado.</div>`;
+    } else if(state.step2.intento2==='si'){
+      html += `<div class="alert" style="border-color:rgba(47,191,113,0.4);background:rgba(47,191,113,0.08);color:#7be6ac;">✅ 2.3 · El lead autorizó el tratamiento de datos. Puedes continuar al paso 3.</div>`;
+    }
+  } else if(state.step2.respuesta==='si'){
+    html += `<div class="alert" style="border-color:rgba(47,191,113,0.4);background:rgba(47,191,113,0.08);color:#7be6ac;">✅ 2.3 · El lead autorizó el tratamiento de datos. Puedes continuar al paso 3.</div>`;
+  }
+  return html;
+}
+function setStep2Respuesta(v){
+  state.step2.respuesta=v;
+  if(v==='si'){ state.step2.intento2=null; state.conversationClosed=false; state.closeReason=''; }
+  else if(v==='no'){ state.conversationClosed=false; state.closeReason=''; }
+  renderAll();
+}
+function setStep2Intento2(v){
+  state.step2.intento2=v;
+  if(v==='si'){ state.step2.respuesta='si'; state.conversationClosed=false; state.closeReason=''; }
+  else if(v==='no'){
+    state.conversationClosed=true;
+    state.closeReason='La conversación fue cerrada porque el lead no autorizó el tratamiento de datos personales (Habeas Data).';
+  }
+  renderAll();
+}
+
+/* ---- STEP 3 ---- */
+function renderStep3(){
+  let html = panelHeader('Paso 03 · Datos personales', 'Confirmación y toma de datos personales');
+  const missing = missingBase();
+  const vId = vehiculoActual();
+  const vName = vId ? vehiculoNombre(vId) : '';
+
+  html += `<div class="divider-label">¿El lead ya tenía datos precargados en el CRM?</div>`;
+  html += `<div class="choice-row">
+    <button class="chip ${state.step3.yaTieneDatos==='si'?'selected':''}" onclick="setYaTieneDatos('si')">Sí, solo confirmar</button>
+    <button class="chip ${state.step3.yaTieneDatos==='no'?'selected':''}" onclick="setYaTieneDatos('no')">No, tomar datos nuevos</button>
+  </div>`;
+
+  const verbo = state.step3.yaTieneDatos==='si' ? 'confírmame' : 'compárteme';
+  const msg = `Muchas gracias por tu autorización, ${tok(state.base.lead,'Nombre')} 🚗✨. Para continuar brindándote una atención ágil y totalmente personalizada, ${verbo} por favor la siguiente información:\n• Nombre completo\n• Número de identificación\n• Celular\n• Correo electrónico\n• Ciudad o municipio\nMientras confirmamos tu información, con gusto te comparto detalles del Nissan ${tok(vName,'Vehículo de interés (defínelo en el panel base o en el paso 4)')} de tu interés.`;
+  currentMessagesText['copy-s3'] = plainText(msg);
+  html += alertBox(missing);
+  html += messageCard(msg, 'copy-s3');
+
+  html += `<div class="divider-label">Datos que el lead proporcionó</div>`;
+  html += `<div class="datos-grid">
+    ${datoField('nombreCompleto','Nombre completo')}
+    ${datoField('cedula','Número de identificación')}
+    ${datoField('celular','Celular')}
+    ${datoField('correo','Correo electrónico')}
+    ${datoField('ciudad','Ciudad o municipio')}
+  </div>`;
+  return html;
+}
+function datoField(key,label){
+  return `<div class="field"><label>${label}</label><input value="${escapeHtml(state.step3[key]||'')}" placeholder="${label}" oninput="setDato3('${key}', this.value)"></div>`;
+}
+function setYaTieneDatos(v){ state.step3.yaTieneDatos=v; renderAll(); }
+function setDato3(key,val){ state.step3[key]=val; renderRail(); renderSummary(); updateProgress(); }
+
+/* ---- STEP 4 ---- */
+function renderStep4(){
+  let html = panelHeader('Paso 04 · Producto', 'Información de producto Nissan');
+  html += `<div class="vehicle-select-row">
+    <div class="field">
+      <label>Línea Nissan de interés (10 productos)</label>
+      <select onchange="setVehiculo4(this.value)">
+        <option value="">— Selecciona un producto —</option>
+        ${VEHICLES.map(v=>`<option value="${v.id}" ${state.step4.vehiculoId===v.id?'selected':''}>${v.nombre} · ${v.segmento}</option>`).join('')}
+      </select>
+    </div>
+  </div>`;
+
+  if(!state.step4.vehiculoId){
+    html += `<div class="alert">⚠️ Selecciona una línea de vehículo para desplegar el copy, versiones y precios.</div>`;
+    return html;
+  }
+
+  const v = VEHICLES.find(x=>x.id===state.step4.vehiculoId);
+
+  html += `<div class="divider-label">4.1 · Copy general de la línea</div>`;
+  currentMessagesText['copy-s4-1'] = v.copy;
+  html += messageCard(v.copy, 'copy-s4-1');
+
+  html += `<div class="divider-label">4.2 · Foto autorizada del vehículo</div>`;
+  html += `<div class="vehicle-photo-note">
+    <div class="icon-box">📷</div>
+    <div class="txt"><b>Adjunta la foto oficial de ${v.nombre}</b><span>Usa únicamente el material autorizado de la galería / catálogo digital de marca. No se generan imágenes en esta herramienta.</span></div>
+  </div>`;
+
+  html += `<div class="divider-label">Ficha técnica rápida</div>`;
+  html += `<div class="spec-strip">${v.specs.map(s=>`<div class="spec-chip"><b>${s[0]}</b><span>${s[1]}</span></div>`).join('')}</div>`;
+
+  html += `<div class="divider-label">4.3 · Copy por versión con presupuesto</div>`;
+  const introV = `Nuestro ${v.nombre} está disponible en las siguientes versiones:\n${v.versiones.map(([n,p])=>`·         ${n} desde ${p}`).join('\n')}\nCada versión está diseñada para adaptarse a tu estilo y acompañarte en cada camino. Para promociones especiales del mes el asesor comercial que te asignaremos te brindará más información.`;
+  currentMessagesText['copy-s4-3'] = introV;
+  html += messageCard(introV, 'copy-s4-3');
+  html += `<table class="versions-table"><thead><tr><th>Versión</th><th>Desde</th></tr></thead><tbody>
+    ${v.versiones.map(([n,p])=>`<tr><td>${n}</td><td class="price">${p}</td></tr>`).join('')}
+  </tbody></table>`;
+
+  html += `<div class="divider-label">4.4 · Pregunta de cierre de producto</div>`;
+  const msg44 = `💬 Cuéntanos, ¿cuál es la versión que más te inspira?`;
+  currentMessagesText['copy-s4-4'] = msg44;
+  html += messageCard(msg44, 'copy-s4-4');
+
+  html += `<div class="field" style="max-width:420px;margin-bottom:18px;"><label>Versión que eligió el cliente</label>
+    <select onchange="setVersionElegida(this.value)">
+      <option value="">— Selecciona —</option>
+      ${v.versiones.map(([n])=>`<option value="${n}" ${state.step4.versionElegida===n?'selected':''}>${n}</option>`).join('')}
+    </select></div>`;
+
+  html += `<button class="toggle-more" onclick="toggleMasInfo()">${state.step4.pideMasInfo? '– Ocultar 4.5 (más información)' : '+ El cliente pidió más información de versiones (4.5)'}</button>`;
+
+  if(state.step4.pideMasInfo){
+    const msg45 = `¡Claro que sí! Te invitamos a ingresar a nuestro Showroom Digital en donde podrás: <a href="${LINK_SHOWROOM}" target="_blank" rel="noopener">${LINK_SHOWROOM}</a>\n·         Ver virtualmente cada versión\n·         Interactuar con los colores y accesorios para tu nuevo Nissan\n·         Conocer nuestra Ficha Técnica con todas las diferencias entre versiones\n·         Identificar las principales tecnologías que hacen de tu Nissan una gran experiencia en conducción`;
+    currentMessagesText['copy-s4-5'] = plainText(msg45, `Showroom Digital: ${LINK_SHOWROOM}`);
+    html += `<div style="margin-top:16px;"><div class="divider-label">4.5 · Solo si el cliente pide más información</div>${messageCard(msg45,'copy-s4-5')}</div>`;
+  }
+
+  return html;
+}
+function setVehiculo4(v){ state.step4.vehiculoId=v; state.step4.versionElegida=''; renderAll(); }
+function setVersionElegida(v){ state.step4.versionElegida=v; renderRail(); renderSummary(); updateProgress(); }
+function toggleMasInfo(){ state.step4.pideMasInfo=!state.step4.pideMasInfo; renderAll(); }
+
+/* ---- STEP 5 ---- */
+function renderStep5(){
+  let html = panelHeader('Paso 05 · Perfilación', 'Paso a asesor comercial · 6 preguntas');
+  const missing = missingBase();
+  html += alertBox(missing);
+  const intro = `Perfecto, ${tok(state.base.lead,'Nombre')} 🚗✨, gracias por tu respuesta. Para asignarte el asesor comercial ideal y brindarte una experiencia aún más personalizada, queremos conocer un poco más sobre cómo te gustaría adquirir el Nissan que te inspira. Por favor, ayúdanos respondiendo las siguientes 6 preguntas:`;
+  currentMessagesText['copy-s5-0'] = plainText(intro);
+  html += messageCard(intro, 'copy-s5-0');
+
+  const qas = [
+    {key:'p1', num:'1', msg:'¡Es un gran momento para estrenar tu Nissan! 🚗✨ ¿Ya tienes en mente cómo te gustaría adquirirlo? Permítenos presentarte las increíbles opciones que tenemos para ti.\n• Financiación\n• Contado\n• Retoma\n• Financiación más retoma', opts:['Financiación','Contado','Retoma','Financiación más retoma'], multi:false},
+    {key:'p2', num:'2', msg:'Para hacer de tu experiencia Nissan aún más especial 🚗✨, cuéntanos: ¿actualmente cuentas con un vehículo?\n• Sí\n• No', opts:['Sí','No'], multi:false},
+    {key:'p3', num:'3', msg:'Perfecto, nos gustaría saber 🤔, ¿en qué plazo tienes previsto adquirir tu nuevo Nissan?\n• Menos de un mes\n• De 1 a 3 meses\n• De 3 a 6 meses\n• No informa', opts:['Menos de un mes','De 1 a 3 meses','De 3 a 6 meses','No informa'], multi:false},
+    {key:'p4', num:'4', msg:'Super! Porfa, cuéntanos, ¿ya haces parte de la familia Nissan o has tenido un Nissan anteriormente 😉?\n• Sí\n• No por ahora', opts:['Sí','No por ahora'], multi:false},
+    {key:'p5', num:'5', msg:'Queremos acompañarte en cada paso de tu experiencia 🚗✨, cuéntanos: ¿sobre qué te gustaría recibir información de Nissan?\n• Cotización\n• Test drive\n• Visita a la vitrina\n• Peritaje\n• Nuestro portafolio', opts:['Cotización','Test drive','Visita a la vitrina','Peritaje','Nuestro portafolio'], multi:true},
+    {key:'p6', num:'6', msg:'Sabemos que elegir tu próximo vehículo es una decisión importante 🚗✨. ¿Actualmente estás considerando otras marcas dentro de tus opciones?\n• No, Nissan es mi primera opción\n• Sí, lo estoy revisando', opts:['No, Nissan es mi primera opción','Sí, lo estoy revisando'], multi:false},
+  ];
+
+  qas.forEach(q=>{
+    currentMessagesText['copy-s5-'+q.key] = plainText(q.msg);
+    html += `<div class="qa-block">
+      <span class="qa-num">Pregunta ${q.num} / 6</span>
+      ${messageCard(q.msg, 'copy-s5-'+q.key)}
+      <div class="qa-answer-label">Respuesta del cliente</div>
+      <div class="choice-row">`;
+    if(q.multi){
+      q.opts.forEach(o=>{
+        const sel = state.step5[q.key].includes(o);
+        html += `<button class="chip ${sel?'selected blue':''}" onclick="toggleMultiAnswer('${q.key}','${o.replace(/'/g,"\\'")}')">${o}</button>`;
+      });
+    } else {
+      q.opts.forEach(o=>{
+        const sel = state.step5[q.key]===o;
+        html += `<button class="chip ${sel?'selected blue':''}" onclick="setSingleAnswer('${q.key}','${o.replace(/'/g,"\\'")}')">${o}</button>`;
+      });
+    }
+    html += `</div></div>`;
+  });
+
+  return html;
+}
+function setSingleAnswer(key,val){ state.step5[key]=val; renderAll(); }
+function toggleMultiAnswer(key,val){
+  const arr = state.step5[key];
+  const i = arr.indexOf(val);
+  if(i>-1) arr.splice(i,1); else arr.push(val);
+  renderAll();
+}
+
+/* ---- STEP 6 ---- */
+function renderStep6(){
+  let html = panelHeader('Paso 06 · Cierre', 'Cierre de conversación');
+  const missing = missingBase();
+  html += alertBox(missing);
+  const msg = `Muchas gracias por tu tiempo y por permitirnos acompañarte en este paso 🚗✨. Con la información que nos compartiste, podremos conectarte con el asesor ideal, quien muy pronto te contactará para brindarte una atención exclusiva según tus preferencias y forma de compra de tu próximo Nissan. De igual forma, te compartimos nuestro Showroom Digital para que puedas ver más de cerca el Nissan que te inspira: <a href="${LINK_SHOWROOM}" target="_blank" rel="noopener">${LINK_SHOWROOM}</a>\nTe deseamos un excelente día y esperamos seguir siendo parte de tu camino.`;
+  currentMessagesText['copy-s6'] = plainText(msg, `Showroom Digital: ${LINK_SHOWROOM}`);
+  html += messageCard(msg, 'copy-s6');
+  html += `<div class="choice-row">
+    <button class="chip ${state.step6.enviado?'selected':''}" onclick="marcarCierreEnviado()">${state.step6.enviado? '✓ Mensaje de cierre enviado' : 'Marcar mensaje como enviado'}</button>
+  </div>`;
+  return html;
+}
+function marcarCierreEnviado(){ state.step6.enviado=true; renderAll(); }
+
+/* ---- STEP 7 ---- */
+function renderStep7(){
+  let html = panelHeader('Paso 07 · Seguimiento', 'Reactivación por tiempo de respuesta / Cierre por inactividad');
+
+  html += `<div class="divider-label">Alerta de reactivación · elige una opción</div>`;
+  const opcionesAlerta = [
+    '¡Seguimos aquí para ti! 🚗✨ Es un placer acompañarte en cada paso, así que no dudes en seguirnos escribiendo. Estamos encantados de continuar contigo este camino hacia tu próximo Nissan.',
+    'Tu tiempo es muy valioso para nosotros 🚗✨. Queremos brindarte una atención ágil y a tu ritmo, por eso te invitamos a seguir conversando con nosotros aquí en el chat. ¿Sigues en línea con nosotros?'
+  ];
+  html += `<div class="choice-row">
+    <button class="chip ${state.step7.alerta===1?'selected':''}" onclick="setAlerta(1)">Opción 1</button>
+    <button class="chip ${state.step7.alerta===2?'selected':''}" onclick="setAlerta(2)">Opción 2</button>
+  </div>`;
+  if(state.step7.alerta){
+    const msg = opcionesAlerta[state.step7.alerta-1];
+    currentMessagesText['copy-s7-a'] = msg;
+    html += messageCard(msg, 'copy-s7-a');
+  }
+
+  html += `<div class="divider-label">Cierre por inactividad · elige una opción</div>`;
+  const opcionesCierre = [
+    `Gracias por compartir este momento con nosotros, ${state.base.lead||'[Nombre]'} 🚗✨. Por ahora finalizaremos esta conversación, pero recuerda que estaremos aquí para acompañarte cuando decidas dar el siguiente paso hacia tu próximo Nissan. Será un gusto hacer un nuevo contacto contigo cuando lo desees. ¡Hasta pronto!`,
+    `Ha sido un placer acompañarte hoy, ${state.base.lead||'[Nombre]'} 🚗✨. Cuando estés listo para continuar este camino hacia tu próximo Nissan, nuestro equipo estará encantado de brindarte una atención personalizada. ¡Hasta pronto!`
+  ];
+  html += `<div class="choice-row">
+    <button class="chip ${state.step7.cierreInactividad===1?'selected':''}" onclick="setCierreInactividad(1)">Opción 1</button>
+    <button class="chip ${state.step7.cierreInactividad===2?'selected':''}" onclick="setCierreInactividad(2)">Opción 2</button>
+  </div>`;
+  if(state.step7.cierreInactividad){
+    const msg = opcionesCierre[state.step7.cierreInactividad-1];
+    currentMessagesText['copy-s7-c'] = plainText(msg);
+    html += messageCard(msg, 'copy-s7-c');
+    html += `<div class="alert" style="border-color:rgba(245,166,35,0.4);">⏱️ Este mensaje finaliza la interacción por inactividad del lead.</div>`;
+  }
+  return html;
+}
+function setAlerta(n){ state.step7.alerta=n; renderAll(); }
+function setCierreInactividad(n){ state.step7.cierreInactividad=n; renderAll(); }
+
+/* ---- shared message card renderer ---- */
+function messageCard(htmlMsg, copyId){
+  return `<div class="message-card"><div class="message-text">${nlToBr(htmlMsg)}</div></div>${copyBtn(copyId)}`;
+}
+function nlToBr(s){ return s.replace(/\n/g,'<br>'); }
+function plainText(msgWithMarks){
+  // strips <mark> wrappers to plain [[Falta: x]] text and turns <a href> tags into plain urls for clipboard copy
+  return msgWithMarks
+    .replace(/<mark class="missing">(.*?)<\/mark>/g, '$1')
+    .replace(/<a [^>]*href="([^"]+)"[^>]*>.*?<\/a>/g, '$1');
+}
+
+/* ===================== SUMMARY ===================== */
+
+function renderSummary(){
+  const grid = document.getElementById('summaryGrid');
+  const vId = vehiculoActual();
+  const vName = vId ? vehiculoNombre(vId) : null;
+
+  const habeasEstado = state.step2.respuesta==='si' ? ['Autorizado','badge-ok'] :
+    (state.step2.intento2==='no' ? ['Rechazado — conversación cerrada','badge-missing'] :
+    (state.step2.respuesta==='no' ? ['Rechazado (primer intento)','badge-missing'] : ['Pendiente','badge-neutral']));
+
+  const cierreEstado = state.conversationClosed ? ['Cerrada por no aceptación de datos','badge-missing'] :
+    (state.step6.enviado ? ['Cierre exitoso enviado','badge-ok'] :
+    (state.step7.cierreInactividad ? [`Cierre por inactividad (opción ${state.step7.cierreInactividad})`,'badge-missing'] : ['En curso','badge-neutral']));
+
+  grid.innerHTML = `
+    <div class="summary-card">
+      <h4>Datos base</h4>
+      ${summaryRow('Agente', state.base.agente)}
+      ${summaryRow('Lead', state.base.lead)}
+      ${summaryRow('Canal', state.base.canal)}
+      ${summaryRow('Vehículo de interés', vName)}
+      ${summaryRow('Versión que inspira', state.step4.versionElegida)}
+    </div>
+    <div class="summary-card">
+      <h4>Cumplimiento y datos</h4>
+      ${summaryRowState('Habeas Data', habeasEstado)}
+      ${summaryRow('Nombre completo', state.step3.nombreCompleto)}
+      ${summaryRow('N° identificación', state.step3.cedula)}
+      ${summaryRow('Celular', state.step3.celular)}
+      ${summaryRow('Correo', state.step3.correo)}
+      ${summaryRow('Ciudad', state.step3.ciudad)}
+    </div>
+    <div class="summary-card">
+      <h4>Perfilación comercial (6 preguntas)</h4>
+      ${summaryRow('Forma de adquisición', state.step5.p1)}
+      ${summaryRow('¿Tiene vehículo actual?', state.step5.p2)}
+      ${summaryRow('Plazo de compra', state.step5.p3)}
+      ${summaryRow('¿Ya es cliente Nissan?', state.step5.p4)}
+      ${summaryRow('Interés en', state.step5.p5.join(', '))}
+      ${summaryRow('¿Considera otras marcas?', state.step5.p6)}
+    </div>
+    <div class="summary-card">
+      <h4>Estado de la conversación</h4>
+      ${summaryRowState('Cierre', cierreEstado)}
+      ${summaryRow('Alerta de reactivación usada', state.step7.alerta ? 'Opción '+state.step7.alerta : null)}
+      ${summaryRow('Mensaje de cierre por inactividad', state.step7.cierreInactividad ? 'Opción '+state.step7.cierreInactividad : null)}
+    </div>
+  `;
+}
+function summaryRow(label, value){
+  const v = value ? value : '<span class="badge-missing">Sin registrar</span>';
+  return `<div class="summary-row"><span>${label}</span><span>${v}</span></div>`;
+}
+function summaryRowState(label, stateArr){
+  return `<div class="summary-row"><span>${label}</span><span class="${stateArr[1]}">${stateArr[0]}</span></div>`;
+}
+
+function copySummary(){
+  const vId = vehiculoActual();
+  const vName = vId ? vehiculoNombre(vId) : 'Sin registrar';
+  const lines = [
+    'RESUMEN DE CONVERSACIÓN · NISSAN COLOMBIA',
+    '--------------------------------------------',
+    `Agente: ${state.base.agente||'—'}`,
+    `Lead: ${state.base.lead||'—'}`,
+    `Canal: ${state.base.canal||'—'}`,
+    `Vehículo de interés: ${vName}`,
+    `Versión que inspira: ${state.step4.versionElegida||'—'}`,
+    '',
+    `Habeas Data: ${state.step2.respuesta==='si'?'Autorizado':(state.step2.intento2==='no'?'Rechazado (cierre)':(state.step2.respuesta==='no'?'Rechazado (1er intento)':'Pendiente'))}`,
+    `Nombre completo: ${state.step3.nombreCompleto||'—'}`,
+    `N° identificación: ${state.step3.cedula||'—'}`,
+    `Celular: ${state.step3.celular||'—'}`,
+    `Correo: ${state.step3.correo||'—'}`,
+    `Ciudad: ${state.step3.ciudad||'—'}`,
+    '',
+    `Forma de adquisición: ${state.step5.p1||'—'}`,
+    `¿Tiene vehículo actual?: ${state.step5.p2||'—'}`,
+    `Plazo de compra: ${state.step5.p3||'—'}`,
+    `¿Ya es cliente Nissan?: ${state.step5.p4||'—'}`,
+    `Interés en: ${state.step5.p5.join(', ')||'—'}`,
+    `¿Considera otras marcas?: ${state.step5.p6||'—'}`,
+    '',
+    `Estado de cierre: ${state.conversationClosed?'Cerrada por no aceptación de datos':(state.step6.enviado?'Cierre exitoso':(state.step7.cierreInactividad?'Cierre por inactividad (opción '+state.step7.cierreInactividad+')':'En curso'))}`,
+  ].join('\n');
+  navigator.clipboard?.writeText(lines).then(()=>{
+    const b=document.getElementById('copySummaryBtn');
+    b.classList.add('copied'); b.textContent='✓ Resumen copiado';
+    setTimeout(()=>{ b.classList.remove('copied'); b.innerHTML='📋 Copiar resumen'; },1800);
+  });
+}
+
+/* ===================== PROGRESS + STATUS ===================== */
+
+function updateProgress(){
+  let done=0;
+  for(let i=1;i<=7;i++){ if(stepStatus(i)==='done') done++; }
+  const pct = Math.round(done/7*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = `${done} / 7 pasos`;
+  document.getElementById('stat-progress').textContent = pct+'%';
+
+  const pill = document.getElementById('statusPill');
+  if(state.conversationClosed){
+    pill.textContent='● Conversación cerrada'; pill.className='status-pill closed';
+  } else {
+    pill.textContent='● Conversación abierta'; pill.className='status-pill open';
+  }
+}
+
+/* ===================== RESET ===================== */
+function resetAll(){
+  if(!confirm('¿Reiniciar toda la conversación actual? Se perderán los datos capturados.')) return;
+  document.getElementById('in-agente').value='';
+  document.getElementById('in-lead').value='';
+  document.getElementById('in-canal').value='WhatsApp';
+  document.getElementById('in-vehiculo-inicial').value='';
+  Object.assign(state, {
+    base:{ agente:'', lead:'', canal:'WhatsApp', vehiculoInicial:'' },
+    step1:{ variante:null, vehiculoSinLinea:'' },
+    step2:{ respuesta:null, intento2:null },
+    step3:{ yaTieneDatos:null, nombreCompleto:'', cedula:'', celular:'', correo:'', ciudad:'' },
+    step4:{ vehiculoId:'', versionElegida:'', pideMasInfo:false },
+    step5:{ p1:'', p2:'', p3:'', p4:'', p5:[], p6:'' },
+    step6:{ enviado:false },
+    step7:{ alerta:null, cierreInactividad:null },
+    activeStep:1,
+    conversationClosed:false,
+    closeReason:''
+  });
+  renderAll();
+  window.scrollTo({top:document.getElementById('app').offsetTop-20, behavior:'smooth'});
+}
+
+/* ===================== MASTER RENDER ===================== */
+function renderAll(){
+  renderRail();
+  renderPanel();
+  renderSummary();
+  updateProgress();
+}
+
+populateVehicleSelect();
+renderAll();
+</script>
+</body>
+</html>
