@@ -937,7 +937,7 @@ function renderStep4(){
   let html = panelHeader('Paso 04 · Producto', 'Información de producto Nissan');
   html += `<div class="vehicle-select-row">
     <div class="field">
-      <label>Línea Nissan de interés (10 productos)</label>
+      <label>Línea Nissan de interés (11 productos)</label>
       <select onchange="setVehiculo4(this.value)">
         <option value="">— Selecciona un producto —</option>
         ${VEHICLES.map(v=>`<option value="${v.id}" ${state.step4.vehiculoId===v.id?'selected':''}>${v.nombre} · ${v.segmento}</option>`).join('')}
