@@ -225,7 +225,7 @@
     padding:26px 28px;
     margin-bottom:40px;
   }
-  .base-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; margin-top:18px; }
+  .base-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px, 1fr)); gap:18px; margin-top:18px; }
   @media (max-width: 980px){ .base-grid{ grid-template-columns:repeat(2,1fr);} }
   @media (max-width: 560px){ .base-grid{ grid-template-columns:1fr;} }
 
@@ -238,6 +238,18 @@
   .field input::placeholder{ color:var(--text-tertiary); }
   .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--hud-blue); }
   .field textarea{ resize:vertical; min-height:70px; }
+  .field input.invalid{ border-color:var(--danger); background:rgba(229,72,77,0.07); }
+  .field input.invalid:focus{ border-color:var(--danger); }
+  .field-error{ display:block; font-size:11.5px; color:var(--danger); margin-top:6px; line-height:1.4; }
+
+  .btn:disabled, .btn[disabled]{ opacity:0.35; cursor:not-allowed; box-shadow:none; pointer-events:none; }
+
+  .panel-nav{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    margin-top:28px; padding-top:22px; border-top:1px solid var(--border-faint);
+  }
+  .panel-nav .btn{ padding:12px 22px; font-size:14px; }
+  @media (max-width:480px){ .panel-nav{ flex-direction:column-reverse; } .panel-nav .btn{ width:100%; justify-content:center; } }
 
   /* main grid: rail + panel */
   .workspace{ display:grid; grid-template-columns:380px 1fr; gap:28px; align-items:start; }
@@ -461,7 +473,7 @@
   </div>
 
   <div class="hero-stats">
-    <div class="stat"><b>7</b><span>Pasos del speech</span></div>
+    <div class="stat"><b>7</b><span>Pasos del speech (6 en Outbound)</span></div>
     <div class="stat"><b>11</b><span>Líneas Nissan disponibles</span></div>
     <div class="stat"><b>6</b><span>Preguntas de perfilación</span></div>
     <div class="stat"><b id="stat-progress">0%</b><span>Progreso de esta conversación</span></div>
@@ -502,6 +514,13 @@
         <select id="in-canal" onchange="onBaseChange()">
           <option>WhatsApp</option>
           <option>Llamada</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="in-modo">Modo de inicio de conversación</label>
+        <select id="in-modo" onchange="onBaseChange()">
+          <option value="inbound">Inbound</option>
+          <option value="outbound">Outbound</option>
         </select>
       </div>
       <div class="field">
@@ -645,7 +664,7 @@ const STEP_DEFS = [
 /* ===================== STATE ===================== */
 
 const state = {
-  base:{ agente:'', lead:'', canal:'WhatsApp', vehiculoInicial:'' },
+  base:{ agente:'', lead:'', canal:'WhatsApp', modo:'inbound', vehiculoInicial:'' },
   step1:{ variante:null, vehiculoSinLinea:'' }, // 'con' | 'sin'
   step2:{ respuesta:null, intento2:null }, // 'si' | 'no'
   step3:{ yaTieneDatos:null, nombreCompleto:'', cedula:'', celular:'', correo:'', ciudad:'' },
@@ -696,11 +715,23 @@ function onBaseChange(){
   state.base.agente = document.getElementById('in-agente').value;
   state.base.lead = document.getElementById('in-lead').value;
   state.base.canal = document.getElementById('in-canal').value;
+  state.base.modo = document.getElementById('in-modo').value;
   state.base.vehiculoInicial = document.getElementById('in-vehiculo-inicial').value;
+  if(state.base.modo==='outbound' && state.activeStep===2){ state.activeStep = 1; }
   renderAll();
 }
 
 /* ===================== STEP UNLOCK LOGIC ===================== */
+
+function visibleStepIds(){
+  // en modo Outbound el paso 2 (Habeas Data) se omite: el lead ya viene autorizado
+  return state.base.modo==='outbound' ? [1,3,4,5,6,7] : [1,2,3,4,5,6,7];
+}
+
+function habeasOk(){
+  if(state.base.modo==='outbound') return true; // ya autorizado previamente
+  return state.step2.respuesta==='si';
+}
 
 function stepStatus(id){
   if(id===1) return state.step1.variante ? 'done' : (state.activeStep===1?'active':'pending');
@@ -708,9 +739,9 @@ function stepStatus(id){
     if(!state.step1.variante) return 'locked';
     return state.step2.respuesta==='si' ? 'done' : (state.activeStep===2?'active':'pending');
   }
-  // pasos 3 a 7 requieren autorización vigente Y que la conversación no haya sido cerrada
+  // pasos 3 a 7 requieren autorización vigente (o modo Outbound) Y que la conversación no haya sido cerrada
   if(state.conversationClosed) return 'locked';
-  if(state.step2.respuesta!=='si') return 'locked';
+  if(!habeasOk()) return 'locked';
   if(id===3){
     const filled = state.step3.nombreCompleto && state.step3.cedula && state.step3.celular && state.step3.correo && state.step3.ciudad;
     return filled ? 'done' : (state.activeStep===3?'active':'pending');
@@ -735,7 +766,7 @@ function stepStatus(id){
 function lockReason(id){
   if(id===2) return 'Selecciona primero la variante del paso 1.';
   if(id>=3 && state.conversationClosed) return 'Conversación cerrada: el lead no autorizó el tratamiento de datos.';
-  if(id>=3) return 'El lead debe autorizar el tratamiento de datos en el paso 2.';
+  if(id>=3 && !habeasOk()) return 'El lead debe autorizar el tratamiento de datos en el paso 2.';
   return '';
 }
 
@@ -744,12 +775,15 @@ function lockReason(id){
 function renderRail(){
   const rail = document.getElementById('rail');
   rail.querySelectorAll('.rail-item').forEach(n=>n.remove());
-  STEP_DEFS.forEach(sd=>{
-    const status = stepStatus(sd.id);
-    const isActive = state.activeStep===sd.id;
+  const ids = visibleStepIds();
+  ids.forEach((stepId, idx)=>{
+    const sd = STEP_DEFS.find(s=>s.id===stepId);
+    const status = stepStatus(stepId);
+    const isActive = state.activeStep===stepId;
+    const displayNum = String(idx+1).padStart(2,'0');
     const item = el(`
       <div class="rail-item ${status==='done'?'done':''} ${isActive?'active':''} ${status==='locked'?'locked':''}">
-        <div class="rail-node">${status==='done' && !isActive ? '✓' : sd.num}</div>
+        <div class="rail-node">${status==='done' && !isActive ? '✓' : displayNum}</div>
         <button class="rail-btn" ${status==='locked'?'disabled':''} onclick="goToStep(${sd.id})">
           <span class="t">${sd.t}</span>
           <span class="d">${sd.d}</span>
@@ -799,11 +833,48 @@ function renderPanel(){
   const id = state.activeStep;
   if(state.conversationClosed && id>2 && stepStatus(id)==='locked'){
     panel.innerHTML = panelHeader('Conversación cerrada', 'Este paso no está disponible') +
-      `<div class="alert danger">🚫 ${state.closeReason}</div>`;
+      `<div class="alert danger">🚫 ${state.closeReason}</div>` + renderStepNav();
     return;
   }
   const renderers = {1:renderStep1, 2:renderStep2, 3:renderStep3, 4:renderStep4, 5:renderStep5, 6:renderStep6, 7:renderStep7};
-  panel.innerHTML = renderers[id] ? renderers[id]() : '';
+  panel.innerHTML = (renderers[id] ? renderers[id]() : '') + renderStepNav();
+}
+
+function renderStepNav(){
+  const ids = visibleStepIds();
+  const idx = ids.indexOf(state.activeStep);
+  const atStart = idx<=0;
+  const atEnd = idx===ids.length-1;
+  const nextLocked = !atEnd && stepStatus(ids[idx+1])==='locked';
+  return `<div class="panel-nav">
+    <button class="btn btn-ghost" onclick="goPrevStep()" ${atStart?'disabled':''}>← Regresar</button>
+    <button class="btn btn-primary" onclick="goNextStep()" ${nextLocked?'disabled':''}>${atEnd? 'Ver resumen →' : 'Siguiente →'}</button>
+  </div>`;
+}
+
+function goPrevStep(){
+  const ids = visibleStepIds();
+  const idx = ids.indexOf(state.activeStep);
+  if(idx>0){
+    state.activeStep = ids[idx-1];
+    renderAll();
+    document.getElementById('panel').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+}
+
+function goNextStep(){
+  const ids = visibleStepIds();
+  const idx = ids.indexOf(state.activeStep);
+  if(idx<0) return;
+  if(idx===ids.length-1){
+    document.getElementById('resumen').scrollIntoView({behavior:'smooth'});
+    return;
+  }
+  const nextId = ids[idx+1];
+  if(stepStatus(nextId)==='locked') return;
+  state.activeStep = nextId;
+  renderAll();
+  document.getElementById('panel').scrollIntoView({behavior:'smooth', block:'nearest'});
 }
 
 /* ---- STEP 1 ---- */
@@ -927,10 +998,52 @@ function renderStep3(){
   return html;
 }
 function datoField(key,label){
-  return `<div class="field"><label>${label}</label><input value="${escapeHtml(state.step3[key]||'')}" placeholder="${label}" oninput="setDato3('${key}', this.value)"></div>`;
+  const val = state.step3[key]||'';
+  const validator = DATO3_VALIDATORS[key];
+  let invalid=false, errMsg='';
+  if(validator){ const res=validator(val); if(!res.ok){ invalid=true; errMsg=res.msg; } }
+  return `<div class="field">
+    <label>${label}</label>
+    <input id="in-dato-${key}" value="${escapeHtml(val)}" placeholder="${label}" class="${invalid?'invalid':''}" oninput="setDato3('${key}', this.value)">
+    <span class="field-error" id="err-${key}" style="${invalid?'':'display:none;'}">⚠️ ${errMsg}</span>
+  </div>`;
 }
+const DATO3_VALIDATORS = {
+  cedula: v=>{
+    if(!v) return {ok:true};
+    const d = v.replace(/\D/g,'');
+    if(d.length===9) return {ok:false, msg:'En Colombia no existen números de identificación de 9 dígitos. Verifica el dato con el lead.'};
+    return {ok:true};
+  },
+  celular: v=>{
+    if(!v) return {ok:true};
+    let d = v.replace(/\D/g,'');
+    if(d.length===12 && d.startsWith('57')) d = d.slice(2); // ignora el indicativo +57 si fue incluido
+    if(d.length!==10) return {ok:false, msg:'El celular debe tener exactamente 10 dígitos (sin contar el +57).'};
+    return {ok:true};
+  }
+};
 function setYaTieneDatos(v){ state.step3.yaTieneDatos=v; renderAll(); }
-function setDato3(key,val){ state.step3[key]=val; renderRail(); renderSummary(); updateProgress(); }
+function setDato3(key,val){
+  state.step3[key]=val;
+  // valida y refleja el estado visual directamente en el DOM, sin re-renderizar el panel completo
+  // (evitar re-render aquí conserva el foco y la posición del cursor mientras el agente escribe)
+  const input = document.getElementById('in-dato-'+key);
+  const errEl = document.getElementById('err-'+key);
+  const validator = DATO3_VALIDATORS[key];
+  if(validator && input && errEl){
+    const res = validator(val);
+    if(!res.ok){
+      input.classList.add('invalid');
+      errEl.textContent = '⚠️ '+res.msg;
+      errEl.style.display = 'block';
+    } else {
+      input.classList.remove('invalid');
+      errEl.style.display = 'none';
+    }
+  }
+  renderRail(); renderSummary(); updateProgress();
+}
 
 /* ---- STEP 4 ---- */
 function renderStep4(){
@@ -1120,9 +1233,10 @@ function renderSummary(){
   const vId = vehiculoActual();
   const vName = vId ? vehiculoNombre(vId) : null;
 
-  const habeasEstado = state.step2.respuesta==='si' ? ['Autorizado','badge-ok'] :
+  const habeasEstado = state.base.modo==='outbound' ? ['Autorizado previamente (Outbound)','badge-ok'] :
+    (state.step2.respuesta==='si' ? ['Autorizado','badge-ok'] :
     (state.step2.intento2==='no' ? ['Rechazado — conversación cerrada','badge-missing'] :
-    (state.step2.respuesta==='no' ? ['Rechazado (primer intento)','badge-missing'] : ['Pendiente','badge-neutral']));
+    (state.step2.respuesta==='no' ? ['Rechazado (primer intento)','badge-missing'] : ['Pendiente','badge-neutral'])));
 
   const cierreEstado = state.conversationClosed ? ['Cerrada por no aceptación de datos','badge-missing'] :
     (state.step6.enviado ? ['Cierre exitoso enviado','badge-ok'] :
@@ -1134,6 +1248,7 @@ function renderSummary(){
       ${summaryRow('Agente', state.base.agente)}
       ${summaryRow('Lead', state.base.lead)}
       ${summaryRow('Canal', state.base.canal)}
+      ${summaryRow('Modo de inicio', state.base.modo==='outbound' ? 'Outbound (6 pasos)' : 'Inbound (7 pasos)')}
       ${summaryRow('Vehículo de interés', vName)}
       ${summaryRow('Versión que inspira', state.step4.versionElegida)}
     </div>
@@ -1180,10 +1295,11 @@ function copySummary(){
     `Agente: ${state.base.agente||'—'}`,
     `Lead: ${state.base.lead||'—'}`,
     `Canal: ${state.base.canal||'—'}`,
+    `Modo de inicio: ${state.base.modo==='outbound' ? 'Outbound (6 pasos)' : 'Inbound (7 pasos)'}`,
     `Vehículo de interés: ${vName}`,
     `Versión que inspira: ${state.step4.versionElegida||'—'}`,
     '',
-    `Habeas Data: ${state.step2.respuesta==='si'?'Autorizado':(state.step2.intento2==='no'?'Rechazado (cierre)':(state.step2.respuesta==='no'?'Rechazado (1er intento)':'Pendiente'))}`,
+    `Habeas Data: ${state.base.modo==='outbound' ? 'Autorizado previamente (Outbound)' : (state.step2.respuesta==='si'?'Autorizado':(state.step2.intento2==='no'?'Rechazado (cierre)':(state.step2.respuesta==='no'?'Rechazado (1er intento)':'Pendiente')))}`,
     `Nombre completo: ${state.step3.nombreCompleto||'—'}`,
     `N° identificación: ${state.step3.cedula||'—'}`,
     `Celular: ${state.step3.celular||'—'}`,
@@ -1209,11 +1325,13 @@ function copySummary(){
 /* ===================== PROGRESS + STATUS ===================== */
 
 function updateProgress(){
+  const ids = visibleStepIds();
   let done=0;
-  for(let i=1;i<=7;i++){ if(stepStatus(i)==='done') done++; }
-  const pct = Math.round(done/7*100);
+  ids.forEach(i=>{ if(stepStatus(i)==='done') done++; });
+  const total = ids.length;
+  const pct = Math.round(done/total*100);
   document.getElementById('progressFill').style.width = pct+'%';
-  document.getElementById('progressText').textContent = `${done} / 7 pasos`;
+  document.getElementById('progressText').textContent = `${done} / ${total} pasos`;
   document.getElementById('stat-progress').textContent = pct+'%';
 
   const pill = document.getElementById('statusPill');
@@ -1230,9 +1348,10 @@ function resetAll(){
   document.getElementById('in-agente').value='';
   document.getElementById('in-lead').value='';
   document.getElementById('in-canal').value='WhatsApp';
+  document.getElementById('in-modo').value='inbound';
   document.getElementById('in-vehiculo-inicial').value='';
   Object.assign(state, {
-    base:{ agente:'', lead:'', canal:'WhatsApp', vehiculoInicial:'' },
+    base:{ agente:'', lead:'', canal:'WhatsApp', modo:'inbound', vehiculoInicial:'' },
     step1:{ variante:null, vehiculoSinLinea:'' },
     step2:{ respuesta:null, intento2:null },
     step3:{ yaTieneDatos:null, nombreCompleto:'', cedula:'', celular:'', correo:'', ciudad:'' },
